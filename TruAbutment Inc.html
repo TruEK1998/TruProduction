@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruAbutment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            background-color: #fff;
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .controls {
+            position: absolute;
+            top: 28px;
+            left: 82%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+        .controls button {
+            font-size: 14px;
+            padding: 6px 16px;
+            margin: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button id="prevButton">Previous</button>
+        <button id="playButton">Play</button>
+        <button id="stopButton">Stop</button>
+        <button id="nextButton">Next</button>
+    </div>
+    <div class="container">
+        <iframe id="contentFrame" src="about:blank"></iframe>
+    </div>
+
+    <script>
+        const links = [
+            "https://docs.google.com/spreadsheets/d/e/2PACX-1vSfNiV0tvkyAwey_AKefNMHPROosXRc7QvS3N85XHfeG0KZ7kVCoD6vdy6OVThtzoVOEFsMRip0HqkM/pubhtml?gid=617511905&single=true",
+            "https://docs.google.com/spreadsheets/d/e/2PACX-1vSfNiV0tvkyAwey_AKefNMHPROosXRc7QvS3N85XHfeG0KZ7kVCoD6vdy6OVThtzoVOEFsMRip0HqkM/pubhtml?gid=1104192401&single=true",
+            "https://docs.google.com/spreadsheets/d/e/2PACX-1vSfNiV0tvkyAwey_AKefNMHPROosXRc7QvS3N85XHfeG0KZ7kVCoD6vdy6OVThtzoVOEFsMRip0HqkM/pubhtml?gid=1714029965&single=true",
+			"https://docs.google.com/spreadsheets/d/e/2PACX-1vSfNiV0tvkyAwey_AKefNMHPROosXRc7QvS3N85XHfeG0KZ7kVCoD6vdy6OVThtzoVOEFsMRip0HqkM/pubhtml?gid=1952471660&single=true",
+            "https://docs.google.com/spreadsheets/d/e/2PACX-1vSfNiV0tvkyAwey_AKefNMHPROosXRc7QvS3N85XHfeG0KZ7kVCoD6vdy6OVThtzoVOEFsMRip0HqkM/pubhtml?gid=376122898&single=true",
+            "https://docs.google.com/spreadsheets/d/e/2PACX-1vSfNiV0tvkyAwey_AKefNMHPROosXRc7QvS3N85XHfeG0KZ7kVCoD6vdy6OVThtzoVOEFsMRip0HqkM/pubhtml?gid=1946679718&single=true"
+        ];
+        let currentIndex = 0;
+        let intervalId;
+
+        function loadLink(index) {
+            if (index >= 0 && index < links.length) {
+                document.getElementById('contentFrame').src = links[index];
+                currentIndex = index;
+            }
+        }
+
+        function loadNextLink() {
+            if (currentIndex < links.length) {
+                document.getElementById('contentFrame').src = links[currentIndex];
+                currentIndex++;
+                intervalId = setTimeout(loadNextLink, 5000); // 5초 후 다음 링크 로드
+            } else {
+                currentIndex = 0; // 모든 링크를 재생한 후 처음부터 다시 시작
+                intervalId = setTimeout(loadNextLink, 5000);
+            }
+        }
+        window.addEventListener('load', loadNextLink);
+        document.getElementById('prevButton').addEventListener('click', () => {
+            loadLink(currentIndex - 1);
+        });
+
+        document.getElementById('playButton').addEventListener('click', () => {
+            if (!intervalId) {
+                loadNextLink();
+            }
+        });
+
+        document.getElementById('stopButton').addEventListener('click', () => {
+            clearTimeout(intervalId);
+            intervalId = null;
+        });
+
+        document.getElementById('nextButton').addEventListener('click', () => {
+            loadLink(currentIndex + 1);
+        });
+    </script>
+</body>
+</html>
